@@ -1,0 +1,12 @@
+Scrapes travelocity for flight information and stores the results in a series of CSVs
+
+Result structure:
+
+results
+ |
+ ----<Date-Scraped>
+        |
+        ------<leave-date_end-date>.csv
+              ...
+
+analyze.py contains the logic for reading in and processing the data
