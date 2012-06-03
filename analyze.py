@@ -1,5 +1,7 @@
 import os
 import csv
+import requests
+import json
 
 from datetime import datetime
 import settings
@@ -19,7 +21,7 @@ def read_latest_results():
         result_path = settings.RESULT_DIR + '/' + results[-1]
         flights = []
         for f in os.listdir(result_path):
-            arrival_date, return_date = f.split('_')
+            arrival_date, return_date = f.rstrip('.csv').split('_')
 
             reader = csv.reader(open(result_path + '/' + f, 'rb'))
 
@@ -59,12 +61,25 @@ def str_flight(flight):
 
 data, scrape_date = read_latest_results()
 
-print "Scraped on %s" % scrape_date
-print
-for flight in get_cheapest(data, 10):
-    print str_flight(flight)
+result = []
 
-print
-print "Days ahead looked: %s" % settings.DATE_WINDOW_SIZE
-print "Minimum trip days: %s" % settings.MIN_TRIP_DAYS
-print "Maximum trip days: %s" % settings.MAX_TRIP_DAYS
+result.append("Scraped on %s" % scrape_date)
+result.append("")
+result.extend([str_flight(flight) for flight in get_cheapest(data, 10)])
+result.append("")
+result.append("Days ahead looked: %s" % settings.DATE_WINDOW_SIZE)
+result.append("Minimum trip days: %s" % settings.MIN_TRIP_DAYS)
+result.append("Maximum trip days: %s" % settings.MAX_TRIP_DAYS)
+
+
+upload_url = None
+
+if settings.DEBUG:
+    upload_url = settings.DEBUG_UPLOAD_URL
+elif hasattr(settings, 'UPLOAD_URL'):
+    upload_url = settings.UPLOAD_URL
+
+if upload_url:
+    response = requests.post(upload_url, data={'content': json.dumps(result)})
+
+print "\n".join(result)

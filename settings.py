@@ -29,3 +29,12 @@ TO='yyz'
 DATE_WINDOW_SIZE=9
 MIN_TRIP_DAYS=7
 MAX_TRIP_DAYS=14
+
+# Overwrite these in localsettings if you wish to upload the results
+DEBUG_UPLOAD_URL=None
+UPLOAD_URL=None
+
+try:
+    from localsettings import *
+except:
+    pass

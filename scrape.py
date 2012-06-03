@@ -22,7 +22,18 @@ def search(leave_date, return_date):
         'fareType': settings.FARE_TYPE
     }
 
-    response = requests.get(settings.SEARCH_URL, params=query_params)
+    if settings.DEBUG:
+        query_string=[key + "=" + str(value) for key, value in query_params.iteritems()]
+        print settings.SEARCH_URL + '?' + '&'.join(query_string)
+
+    # Need to spoof the cookies so it doesn't reject the request
+    # TODO this is pretty brittle, not sure when it will stop working
+    cookies = {
+        'JSESSIONID':	'BC3DC263DC6AF33B1E635B7CCC2A1029.p0600',
+        'TUID':	'252a5b55-d831-49d8-803b-419bd22f430c',
+    }
+
+    response = requests.get(settings.SEARCH_URL, params=query_params, cookies=cookies)
 
     return json.loads(response.text)
 
@@ -64,20 +75,26 @@ def search_range(start_day, end_day, min_trip_length, max_trip_length):
             file_name = "%s_%s.csv" % (leave_date.strftime(settings.DATE_FILE_FORMAT), \
                                         return_date.strftime(settings.DATE_FILE_FORMAT))
 
-            writer = csv.writer(open(result_path + '/' + file_name, 'wb+'))
-
-            # Header row
-            writer.writerow(settings.CSV_FIELDS)
-
             try:
                 result = search(leave_date.strftime(settings.DATE_FORMAT), \
                                 return_date.strftime(settings.DATE_FORMAT))
+
+                if 'errors' in result:
+                    if settings.DEBUG:
+                        print "No results found"
+                    continue
+
+                writer = csv.writer(open(result_path + '/' + file_name, 'wb+'))
+
+                # Header row
+                writer.writerow(settings.CSV_FIELDS)
 
                 for flight in result['results']:
                     writer.writerow([flight[field] for field in settings.CSV_FIELDS])
 
             except Exception, e:
                 print "Failed to perform search %s" % e.message
+                return
 
 
 now = datetime.now()

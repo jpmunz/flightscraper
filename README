@@ -1,4 +1,4 @@
-Scrapes travelocity for flight information and stores the results in a series of CSVs
+Scrapes Travelocity for flight information within a range of dates and stores the results in a series of CSVs
 
 Result structure:
 
