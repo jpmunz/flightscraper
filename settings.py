@@ -4,6 +4,8 @@ RESULT_DIR='results'
 
 DATE_FORMAT = '%m/%d/%Y'
 DATE_FILE_FORMAT = '%m-%d-%Y'
+DATE_FOLDER_FORMAT = '%m-%d-%Y-%H%M%S'
+
 CSV_FIELDS = 'numberOfStops', 'totalFare', 'arrivalTime', 'departureTime', 'allAirlines', 'allFlightNumbers'
 
 
@@ -21,10 +23,6 @@ TICKET_TYPE="ECONOMY"
 FARE_TYPE="all"
 
 NUM_ADULTS=1
-
-FROM='sfo'
-TO='yyz'
-
 
 DATE_WINDOW_SIZE=9
 MIN_TRIP_DAYS=7
