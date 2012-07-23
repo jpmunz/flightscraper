@@ -109,9 +109,17 @@ if __name__ == '__main__':
     parser.add_argument('--max-duration', type=int, default=settings.MAX_TRIP_DAYS, help="Longest possible trip duration")
     parser.add_argument('--num-adults', type=int, default=settings.NUM_ADULTS, help="Number of adults flying")
 
+    parser.add_argument('--relative-dates', action='store_true', default=False, help="start and end date will be interpreted as number of days from present")
+
     args = parser.parse_args()
-    start = datetime.strptime(args.start_date, settings.DATE_FORMAT)
-    end = datetime.strptime(args.end_date, settings.DATE_FORMAT)
+
+    if(args.relative_dates):
+        now = datetime.now()
+        start = now + timedelta(int(args.start_date))
+        end = now + timedelta(int(args.end_date))
+    else:
+        start = datetime.strptime(args.start_date, settings.DATE_FORMAT)
+        end = datetime.strptime(args.end_date, settings.DATE_FORMAT)
 
     # These are using camelCased keys to match the travelocity REST API
     query_params = {
