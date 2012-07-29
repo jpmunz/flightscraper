@@ -93,7 +93,7 @@ def search_range(start_day, end_day, min_trip_length, max_trip_length, query_par
 
             except Exception, e:
                 print "Failed to perform search %s" % e.message
-                return
+                continue
 
 
 if __name__ == '__main__':
